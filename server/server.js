@@ -11,10 +11,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json())
 app.use(cookieSession({
-    secret: 'mysuperawesomebutalsosupersecretsecretkey',
+    secret: process.env.COOKIE_SESSION_SECRET_KEY,
     maxAge: 24 * 60 * 60 * 1000
 }))
-app.use('/api/users', customerRouter)
+app.use('/api/customers', customerRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/checkout', checkoutRouter)
 
