@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
-const userRouter = require('./resources/users/userRouter');
 const authRouter = require('./resources/auth/authRouter');
 const cookieSession = require('cookie-session');
-require('dotenv').config();
+const customerRouter = require('./resources/customers/customerRouter');
+const checkoutRouter = require('./resources/checkout/checkoutRouter');
+
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -12,7 +14,8 @@ app.use(cookieSession({
     secret: 'mysuperawesomebutalsosupersecretsecretkey',
     maxAge: 24 * 60 * 60 * 1000
 }))
-app.use('/api/users', userRouter)
+app.use('/api/users', customerRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/checkout', checkoutRouter)
 
 app.listen(PORT, () => console.log('Server listening on port', PORT));
