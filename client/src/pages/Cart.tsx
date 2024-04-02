@@ -8,6 +8,7 @@ const Cart = () => {
   const { itemsInCart } = useContext(CustomerContext);
   const [grandTotal, setGrandTotal] = useState(0);
 
+  // Den här ska uppdateras när något tas bort ur kundvagnen
   useEffect(() => {
     let total = 0;
     itemsInCart.forEach((item) => (total += item.price * item.quantity));
@@ -23,7 +24,7 @@ const Cart = () => {
     try {
       const res = await axios.post(
         import.meta.env.VITE_API_URL + '/stripe/create-checkout-session',
-        { body: checkOutItems }
+        checkOutItems
       );
 
       if (res.status === 200) {

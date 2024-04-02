@@ -4,14 +4,12 @@ const stripe = initStripe();
 
 const createCheckoutSession = async (req, res) => {
 
-  const { body } = req.body
-
-  console.log(body)
+  console.log(req.body)
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
-      line_items: body,
+      line_items: req.body,
       success_url: `${process.env.CLIENT_URL}/success`,
       cancel_url: `${process.env.CLIENT_URL}/cart`,
     });
