@@ -4,7 +4,8 @@ import { CustomerProvider } from '../context/customer/CustomerContext';
 
 const Layout = () => {
   return (
-      <CustomerProvider>
+    <CustomerProvider>
+      <div className="container mx-auto">
         <header>
           <Navigation />
         </header>
@@ -12,7 +13,8 @@ const Layout = () => {
           <Outlet />
         </main>
         <footer>footer</footer>
-      </CustomerProvider>
+      </div>
+    </CustomerProvider>
   );
 };
 export default Layout;
