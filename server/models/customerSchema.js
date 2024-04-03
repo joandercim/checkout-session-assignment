@@ -1,8 +1,8 @@
 const Joi = require('joi');
 
 const customerSchema = Joi.object({
-  firstname: Joi.string().required(),
-  lastname: Joi.string().required(),
+  _id: Joi.string(),
+  name: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
   location: Joi.object({

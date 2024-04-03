@@ -55,8 +55,7 @@ exports.createCustomer = async (req, res) => {
 
   const newCustomer = new Customer(
     uuidv4(),
-    req.body.firstname,
-    req.body.lastname,
+    req.body.name,
     req.body.email,
     hashedPass,
     new CustomerLocation (

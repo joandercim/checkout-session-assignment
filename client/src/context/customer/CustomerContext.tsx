@@ -2,13 +2,14 @@ import { ReactNode, createContext, useState } from 'react';
 import { CartItem } from '../../models/CartItem';
 import { IProduct } from '../../models/IProduct';
 import axios from 'axios';
+import { Customer } from '../../models/Customer';
 
 interface ICustomerContext {
   isLoggedIn: boolean;
   itemsInCart: CartItem[];
   addToCart: (product: IProduct, price: number) => void;
   login: (email: string, password: string) => Promise<Number | undefined>;
-  createCustomer: () => void;
+  createCustomer: (customer: Customer) => void;
 }
 
 interface ICustomerProviderProps {
@@ -59,8 +60,8 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
     }
   };
 
-  const createCustomer = () => {
-    console.log('Create customer');
+  const createCustomer = async (customer: Customer) => {
+    console.log(customer);
   };
 
   const addToCart = (product: IProduct, price: number) => {
