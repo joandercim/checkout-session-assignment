@@ -60,7 +60,6 @@ exports.createCustomer = async (req, res) => {
     hashedPass,
     new CustomerLocation (
       req.body.location.street,
-      req.body.location.streetNo,
       req.body.location.zipCode,
       req.body.location.city
     )

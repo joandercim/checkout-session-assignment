@@ -26,7 +26,7 @@ const login = async (req, res) => {
 
   res
     .status(200)
-    .json({ success: true, msg: `Customer ${currentCustomer._id} logged in.` });
+    .json({ success: true, customer: currentCustomer._id });
 };
 
 // Log out route
@@ -36,17 +36,17 @@ const logout = (req, res) => {
 };
 
 // Route to check if customer is logged in
-const authorize = (req, res) => {
+const authorize = async (req, res) => {
   if (!req.session.customer)
     return res
-      .status(401)
-      .json({ success: true, msg: 'No customer logged in.' });
+      .status(200)
+      .json({ success: true, customer: null });
 
   res
     .status(200)
     .json({
       success: true,
-      msg: `Customer ${req.session.customer} is logged in.`,
+      customer: req.session.customer,
     });
 };
 

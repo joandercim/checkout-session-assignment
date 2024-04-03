@@ -3,13 +3,16 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { CustomerContext } from '../context/customer/CustomerContext';
 import { Customer } from '../models/Customer';
 import { CustomerLocation } from '../models/CustomerLocation';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const [isRegistered, setIsRegistered] = useState(true);
-  const { login, createCustomer } = useContext(CustomerContext);
+  const { login, logout, createCustomer, customer } = useContext(CustomerContext);
+
+  const navigate = useNavigate();
 
   const [newCustomerInput, setNewCustomerInput] = useState<Customer>(
-    new Customer('', '', '', new CustomerLocation('', '', '', ''))
+    new Customer('', '', '', '', new CustomerLocation('', '', ''))
   );
 
   const [inputEmail, setInputEmail] = useState('');
@@ -19,7 +22,9 @@ const LoginForm = () => {
     const statusCode = await login(inputEmail, inputPass);
 
     if (statusCode === 200) {
-      console.log(statusCode);
+      setInputEmail('');
+      setInputPass('');
+      navigate('/')
     } else if (statusCode === 401) {
       console.log(statusCode);
     } else {
@@ -34,7 +39,7 @@ const LoginForm = () => {
   const handleCreateCustomerChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target;
 
-    if (['street', 'streetNo', 'city', 'zipCode'].includes(name)) {
+    if (['street', 'city', 'zipCode'].includes(name)) {
       setNewCustomerInput((prevInput) => {
         return {
           ...prevInput,
@@ -59,8 +64,13 @@ const LoginForm = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+  }
+
   return (
-    <div className="border max-w-80 mx-auto p-2 relative">
+    <div className="border max-w-80 mx-auto p-2 mt-5 relative shadow-md">
+      {customer !== '' && <button onClick={handleLogout}>logout</button>}
       <h1 className="text-center my-8">
         {isRegistered ? (
           <>
@@ -139,15 +149,6 @@ const LoginForm = () => {
             <input
               type="text"
               className="p-2 rounded-md m-2 border"
-              name="streetNo"
-              id="streetNo"
-              placeholder="Gatunummer"
-              value={newCustomerInput.location.streetNo}
-              onChange={(e) => handleCreateCustomerChange(e)}
-            />
-            <input
-              type="text"
-              className="p-2 rounded-md m-2 border"
               name="zipCode"
               id="zipCode"
               placeholder="Postnummer"
@@ -177,13 +178,15 @@ const LoginForm = () => {
         <button className="m-2 px-4 py-2 rounded-md border shadow-md active:shadow-none bg-green-300 hover:bg-green-400">
           {isRegistered ? 'Logga in' : 'Skapa konto'}
         </button>
-        {!isRegistered && (
-          <button className="go-back-container inline-block absolute left-2 top-2 text-sm opacity-50 hover:opacity-90">
+      </form>
+      {!isRegistered && (
+        <button
+          onClick={() => setIsRegistered(true)}
+          className="go-back-container inline-block absolute left-2 top-2 text-sm opacity-50 hover:opacity-90">
             <FaArrowLeft className="inline" />{' '}
             <span>Tillbaka till inloggning</span>
           </button>
         )}
-      </form>
     </div>
   );
 };

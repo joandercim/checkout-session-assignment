@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useState } from 'react';
+import { ReactNode, createContext, useEffect, useState } from 'react';
 import { CartItem } from '../../models/CartItem';
 import { IProduct } from '../../models/IProduct';
 import axios from 'axios';
@@ -6,9 +6,11 @@ import { Customer } from '../../models/Customer';
 
 interface ICustomerContext {
   isLoggedIn: boolean;
+  customer: string;
   itemsInCart: CartItem[];
   addToCart: (product: IProduct, price: number) => void;
   login: (email: string, password: string) => Promise<Number | undefined>;
+  logout: () => void;
   createCustomer: (customer: Customer) => void;
 }
 
@@ -18,17 +20,41 @@ interface ICustomerProviderProps {
 
 export const CustomerContext = createContext<ICustomerContext>({
   isLoggedIn: false,
+  customer: '',
   itemsInCart: [],
   addToCart: () => {},
   login: () => {
     return Promise.reject('login function not implemented');
   },
+  logout: () => {},
   createCustomer: () => {},
 });
 
 export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
   const isLoggedIn = false;
+  const [customer, setCustomer] = useState('');
   const [itemsInCart, setItemsInCart] = useState<CartItem[]>([]);
+
+  useEffect(() => {
+    const checkCustomerLoggedIn = async () => {
+      try {
+        const res = await axios.get(
+          import.meta.env.VITE_API_URL + '/auth/authorize',
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (res.data.customer) {
+          setCustomer(res.data.customer);
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    };
+
+    checkCustomerLoggedIn();
+  }, []);
 
   const login = async (
     email: string,
@@ -36,7 +62,7 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
   ): Promise<Number | undefined> => {
     try {
       const res = await axios.post(
-        'http://localhost:3000/api/auth/login',
+        import.meta.env.VITE_API_URL + '/auth/login',
         {
           email,
           password,
@@ -45,6 +71,8 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
           withCredentials: true,
         }
       );
+
+      setCustomer(res.data.customer)
 
       return res.status;
     } catch (error) {
@@ -58,6 +86,17 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
         return 500;
       }
     }
+  };
+
+  const logout = async () => {
+    const res = await axios.post(
+      import.meta.env.VITE_API_URL + '/auth/logout', {},
+      {
+        withCredentials: true,
+      }
+    );
+
+    setCustomer('');
   };
 
   const createCustomer = async (customer: Customer) => {
@@ -90,7 +129,15 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
 
   return (
     <CustomerContext.Provider
-      value={{ isLoggedIn, itemsInCart, addToCart, login, createCustomer }}
+      value={{
+        isLoggedIn,
+        itemsInCart,
+        customer,
+        addToCart,
+        login,
+        logout,
+        createCustomer,
+      }}
     >
       {children}
     </CustomerContext.Provider>
