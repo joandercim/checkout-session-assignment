@@ -1,6 +1,8 @@
+const { CLIENT_RENEG_LIMIT } = require('tls');
 const StripeCustomer = require('../../models/StripeCustomer');
 const initStripe = require('../../stripe');
 const CustomerService = require('../../utils/CustomerService');
+const { randomUUID } = require('crypto');
 const fs = require('fs').promises;
 
 const stripe = initStripe();
@@ -86,22 +88,45 @@ const createStripeCustomer = async (req, res) => {
 
 const verifySession = async (req, res) => {
   const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
+  let count = 0;
 
-  if (session.payment_status !== 'paid') {
-    return res.status(200).json({verified: false})
+  if (session.payment_status === 'paid') {
+    count++;
+    console.log(count);
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+
+    const orders = await fs.readFile('./data/orders.json');
+
+    const parsedOrders = await JSON.parse(orders);
+
+    const order = {
+      orderNumber: randomUUID(),
+      orderId: session.id,
+      customerId: session.customer_details.customer,
+      customerName: session.customer_details.name,
+      products: lineItems,
+      total: session.amount_total / 100,
+      timestamp: new Date().toLocaleString(),
+    };
+
+    parsedOrders.push(order);
+
+    await fs.writeFile(
+      './data/orders.json',
+      JSON.stringify(parsedOrders, null, 2)
+    );
+
+    return res.status(200).json({ verified: true });
   } else {
-    // TODO:
-    // SKAPA OCH SPARA EN ORDER
-    return res.status(200).json({verified: true}) 
+    return res.status(200).json({ verified: false });
   }
 };
 
 module.exports = {
   createCheckoutSession,
   getAllProducts,
-  getAllPrices,
   createStripeCustomer,
-  verifySession
+  verifySession,
 };
 
 // Retrieve a session

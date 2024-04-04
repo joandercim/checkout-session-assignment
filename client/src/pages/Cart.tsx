@@ -21,7 +21,7 @@ const Cart = () => {
   useEffect(() => {
     if (customer !== '') {
       setIsLoggedIn(true);
-      console.log(customer)
+      console.log(customer);
     } else {
       setIsLoggedIn(false);
     }
@@ -38,11 +38,19 @@ const Cart = () => {
         {
           checkoutItems,
           customer,
+        },
+        {
+          withCredentials: true,
         }
       );
 
+      if (res.status === 401) {
+        console.log('You are not logged in');
+        return;
+      }
+
       if (res.status === 200) {
-        localStorage.setItem('sessionId', JSON.stringify(res.data.sessionId))
+        localStorage.setItem('sessionId', JSON.stringify(res.data.sessionId));
         window.location = res.data.url;
         // Spara sessionId i localstorage för att kunna hämta det i verifySession
       }
