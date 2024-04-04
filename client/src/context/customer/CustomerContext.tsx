@@ -49,7 +49,7 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
           setCustomer(res.data.customer);
         }
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     };
 
@@ -72,7 +72,7 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
         }
       );
 
-      setCustomer(res.data.customer)
+      setCustomer(res.data.customer);
 
       return res.status;
     } catch (error) {
@@ -90,7 +90,8 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
 
   const logout = async () => {
     const res = await axios.post(
-      import.meta.env.VITE_API_URL + '/auth/logout', {},
+      import.meta.env.VITE_API_URL + '/auth/logout',
+      {},
       {
         withCredentials: true,
       }
@@ -100,7 +101,11 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
   };
 
   const createCustomer = async (customer: Customer) => {
-    console.log(customer);
+    const res = await axios.post(
+      import.meta.env.VITE_API_URL + '/customers/create',
+      customer
+    );
+    console.log(res);
   };
 
   const addToCart = (product: IProduct, price: number) => {

@@ -29,6 +29,8 @@ const Cart = () => {
 
       if (res.status === 200) {
         window.location = res.data.url;
+        // Spara sessionId i localstorage för att kunna hämta det i verifySession
+        // localStorage.setItem('sessionId', JSON.stringify(res.sessionId))
       }
     } catch (error) {
       console.error(error);

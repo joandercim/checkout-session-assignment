@@ -12,7 +12,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const [newCustomerInput, setNewCustomerInput] = useState<Customer>(
-    new Customer('', '', '', '', new CustomerLocation('', '', ''))
+    new Customer('1', '', '', '', new CustomerLocation('', '', ''))
   );
 
   const [inputEmail, setInputEmail] = useState('');

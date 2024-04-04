@@ -2,28 +2,12 @@ const initStripe = require('../../stripe');
 
 const stripe = initStripe();
 
-const createCheckoutSession = async (req, res) => {
-
-  console.log(req.body)
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'payment',
-      line_items: req.body,
-      success_url: `${process.env.CLIENT_URL}/success`,
-      cancel_url: `${process.env.CLIENT_URL}/cart`,
-    });
-
-    res.status(200).json({ msg: 'Session created', url: session.url });
-  } catch (e) {
-    res.status(200).json({ error: e.message });
-  }
-};
-
 const getAllProducts = async (req, res) => {
   try {
     console.log('Fetching products');
-    const products = await stripe.products.list();
+    const products = await stripe.products.list({
+      expand: ['data.default_price'],
+    });
     res.status(200).json({ success: true, products });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -38,7 +22,36 @@ const getAllPrices = async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-}
+};
+
+const createCheckoutSession = async (req, res) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      line_items: req.body,
+      success_url: `${process.env.CLIENT_URL}/success`,
+      cancel_url: `${process.env.CLIENT_URL}/cart`,
+    });
+
+    res
+      .status(200)
+      .json({
+        msg: 'Session created',
+        url: session.url,
+        // sessionId: session.id,
+      });
+  } catch (e) {
+    res.status(200).json({ error: e.message });
+  }
+};
+
+const verifySession = async (req, res) => {
+  const sessionId = req.body.sessionId
+
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+};
 
 module.exports = { createCheckoutSession, getAllProducts, getAllPrices };
 
