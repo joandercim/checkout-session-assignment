@@ -10,7 +10,7 @@ const Navigation = () => {
   itemsInCart.forEach((item) => (itemsInCartTotal += item.quantity));
 
   return (
-    <div className="navigation-wrapper">
+    <div className="navigation-wrapper mb-20">
       <nav className="flex justify-between items-center px-10">
         <div className="left-side-nav">
           <Link to="/" className="p-2 block">

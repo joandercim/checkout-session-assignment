@@ -1,4 +1,7 @@
+const StripeCustomer = require('../../models/StripeCustomer');
 const initStripe = require('../../stripe');
+const CustomerService = require('../../utils/CustomerService');
+const fs = require('fs').promises;
 
 const stripe = initStripe();
 
@@ -25,35 +28,81 @@ const getAllPrices = async (req, res) => {
 };
 
 const createCheckoutSession = async (req, res) => {
+  const currentCustomer = await CustomerService.getCurrentCustomerByEmail(
+    req.body.customer
+  );
+
   try {
     const session = await stripe.checkout.sessions.create({
+      customer: currentCustomer.stripeId,
       payment_method_types: ['card'],
       mode: 'payment',
-      line_items: req.body,
+      line_items: req.body.checkoutItems,
       success_url: `${process.env.CLIENT_URL}/success`,
       cancel_url: `${process.env.CLIENT_URL}/cart`,
     });
 
-    res
-      .status(200)
-      .json({
-        msg: 'Session created',
-        url: session.url,
-        // sessionId: session.id,
-      });
+    res.status(200).json({
+      msg: 'Session created',
+      url: session.url,
+      sessionId: session.id,
+    });
   } catch (e) {
     res.status(200).json({ error: e.message });
   }
 };
 
-const verifySession = async (req, res) => {
-  const sessionId = req.body.sessionId
+const createStripeCustomer = async (req, res) => {
+  const { name, email } = req.body;
+  const newStripeCustomer = new StripeCustomer(name, email);
 
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  try {
+    const customer = await stripe.customers.create(newStripeCustomer);
+    const customersInDB = await CustomerService.getAllCustomers();
+    const customerInDB = await CustomerService.getCurrentCustomerByEmail(email);
 
+    if (customerInDB) {
+      customerInDB.stripeId = customer.id;
+
+      const updatedCustomers = customersInDB.map((cust) => {
+        if (cust.email === email) {
+          console.log('Updating customer...');
+          return customerInDB;
+        } else {
+          return cust;
+        }
+      });
+      fs.writeFile(
+        './data/customers.json',
+        JSON.stringify(updatedCustomers, null, 2)
+      );
+    }
+
+    res.status(200).json({ success: true, customerId: customer.id });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
 };
 
-module.exports = { createCheckoutSession, getAllProducts, getAllPrices };
+const verifySession = async (req, res) => {
+  const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
+
+  if (session.payment_status !== 'paid') {
+    return res.status(200).json({verified: false})
+  } else {
+    // TODO:
+    // SKAPA OCH SPARA EN ORDER
+    return res.status(200).json({verified: true}) 
+  }
+};
+
+module.exports = {
+  createCheckoutSession,
+  getAllProducts,
+  getAllPrices,
+  createStripeCustomer,
+  verifySession
+};
 
 // Retrieve a session
 // OM payment_status === true så har allt gått bra.

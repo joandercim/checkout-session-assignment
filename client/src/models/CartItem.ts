@@ -1,6 +1,6 @@
 export class CartItem {
   constructor(
-    public default_price: string,
+    public productId: string,
     public quantity: number,
     public images: string[],
     public name: string, 
