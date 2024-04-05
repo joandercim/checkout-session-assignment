@@ -22,7 +22,7 @@ const Success = () => {
     };
 
     verifySession();
-  }, []);
+  }, [isVerified]);
   return <div>{!isVerified ? 'Laddar...' : 'Tack för din order!'}</div>;
 };
 export default Success;

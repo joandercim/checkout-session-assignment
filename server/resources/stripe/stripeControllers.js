@@ -19,16 +19,6 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-const getAllPrices = async (req, res) => {
-  try {
-    console.log('Fetching prices');
-    const prices = await stripe.prices.list();
-    res.status(200).json({ success: true, prices });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-};
-
 const createCheckoutSession = async (req, res) => {
   const currentCustomer = await CustomerService.getCurrentCustomerByEmail(
     req.body.customer
@@ -88,37 +78,41 @@ const createStripeCustomer = async (req, res) => {
 
 const verifySession = async (req, res) => {
   const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
-  let count = 0;
 
-  if (session.payment_status === 'paid') {
-    count++;
-    console.log(count);
-    const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+  const orders = await fs.readFile('./data/orders.json');
+  const parsedOrders = await JSON.parse(orders);
 
-    const orders = await fs.readFile('./data/orders.json');
+  const orderExists = parsedOrders.find(
+    (o) => o.orderId === req.body.sessionId
+  );
 
-    const parsedOrders = await JSON.parse(orders);
+  if (!orderExists) {
+    if (session.payment_status === 'paid') {
+      const lineItems = await stripe.checkout.sessions.listLineItems(
+        session.id
+      );
 
-    const order = {
-      orderNumber: randomUUID(),
-      orderId: session.id,
-      customerId: session.customer_details.customer,
-      customerName: session.customer_details.name,
-      products: lineItems,
-      total: session.amount_total / 100,
-      timestamp: new Date().toLocaleString(),
-    };
+      const order = {
+        orderNumber: randomUUID(),
+        orderId: session.id,
+        customerId: session.customer_details.customer,
+        customerName: session.customer_details.name,
+        products: lineItems,
+        total: session.amount_total / 100,
+        timestamp: new Date().toLocaleString(),
+      };
 
-    parsedOrders.push(order);
+      parsedOrders.push(order);
 
-    await fs.writeFile(
-      './data/orders.json',
-      JSON.stringify(parsedOrders, null, 2)
-    );
+      await fs.writeFile(
+        './data/orders.json',
+        JSON.stringify(parsedOrders, null, 2)
+      );
 
-    return res.status(200).json({ verified: true });
-  } else {
-    return res.status(200).json({ verified: false });
+      return res.status(200).json({ verified: true });
+    } else {
+      return res.status(200).json({ verified: false });
+    }
   }
 };
 
