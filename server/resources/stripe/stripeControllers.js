@@ -1,4 +1,3 @@
-const { CLIENT_RENEG_LIMIT } = require('tls');
 const StripeCustomer = require('../../models/StripeCustomer');
 const initStripe = require('../../stripe');
 const CustomerService = require('../../utils/CustomerService');

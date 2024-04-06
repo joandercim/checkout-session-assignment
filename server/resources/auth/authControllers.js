@@ -25,7 +25,7 @@ const login = async (req, res) => {
 
   res
     .status(200)
-    .json({ success: true, customer: currentCustomer.email });
+    .json({ success: true, customer: currentCustomer });
 };
 
 const logout = (req, res) => {

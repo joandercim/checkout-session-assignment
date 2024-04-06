@@ -19,7 +19,7 @@ const Cart = () => {
   }, [itemsInCart]);
 
   useEffect(() => {
-    if (customer !== '') {
+    if (customer) {
       setIsLoggedIn(true);
       console.log(customer);
     } else {
@@ -37,7 +37,7 @@ const Cart = () => {
         import.meta.env.VITE_API_URL + '/stripe/create-checkout-session',
         {
           checkoutItems,
-          customer,
+          customer: customer?.email,
         },
         {
           withCredentials: true,
@@ -52,7 +52,6 @@ const Cart = () => {
       if (res.status === 200) {
         localStorage.setItem('sessionId', JSON.stringify(res.data.sessionId));
         window.location = res.data.url;
-        // Spara sessionId i localstorage för att kunna hämta det i verifySession
       }
     } catch (error) {
       console.error(error);

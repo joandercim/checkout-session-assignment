@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const customerSchema = require('../../models/customerSchema');
 const CustomerService = require('../../utils/CustomerService');
+const StripeServices = require('../../utils/StripeServices')
 const Customer = require('../../models/Customer');
 const CustomerLocation = require('../../models/CustomerLocation');
 
@@ -26,7 +27,9 @@ exports.getCustomer = async (req, res) => {
     });
   }
 
-  res.status(200).json({ success: true, customer: currentCustomer._id });
+  const { name, email, location } = currentCustomer;
+
+  res.status(200).json({ success: true, customer: name, email, location });
 };
 
 exports.createCustomer = async (req, res) => {
@@ -58,7 +61,7 @@ exports.createCustomer = async (req, res) => {
     req.body.name,
     req.body.email,
     hashedPass,
-    new CustomerLocation (
+    new CustomerLocation(
       req.body.location.street,
       req.body.location.zipCode,
       req.body.location.city
@@ -71,6 +74,8 @@ exports.createCustomer = async (req, res) => {
     './data/customers.json',
     JSON.stringify(customers, null, 2)
   );
+
+  // const respoi = await StripeServices.createStripeCustomer(req.body.name, req.body.email)
 
   res.status(201).json({ success: true, customer: newCustomer.email });
 };

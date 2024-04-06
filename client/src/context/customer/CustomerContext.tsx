@@ -3,10 +3,11 @@ import { CartItem } from '../../models/CartItem';
 import { IProduct } from '../../models/IProduct';
 import axios from 'axios';
 import { Customer } from '../../models/Customer';
+import { ILoggedInCustomer } from '../../models/ILoggedInCustomer';
 
 interface ICustomerContext {
   isLoggedIn: boolean;
-  customer: string;
+  customer: ILoggedInCustomer | undefined;
   itemsInCart: CartItem[];
   addToCart: (product: IProduct, price: number) => void;
   removeProduct: (id: string) => void;
@@ -21,7 +22,7 @@ interface ICustomerProviderProps {
 
 export const CustomerContext = createContext<ICustomerContext>({
   isLoggedIn: false,
-  customer: '',
+  customer: undefined,
   itemsInCart: [],
   addToCart: () => {},
   removeProduct: () => {},
@@ -34,7 +35,7 @@ export const CustomerContext = createContext<ICustomerContext>({
 
 export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
   const isLoggedIn = false;
-  const [customer, setCustomer] = useState('');
+  const [customer, setCustomer] = useState<ILoggedInCustomer>();
   const [itemsInCart, setItemsInCart] = useState<CartItem[]>([]);
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
 
         if (res.data.customer) {
           setCustomer(res.data.customer);
+          console.log(res.data.customer)
         }
       } catch (error) {
         console.error(error);
@@ -100,7 +102,7 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
     );
 
     console.log(res);
-    setCustomer('');
+    setCustomer(undefined);
   };
 
   const createCustomer = async (customer: Customer) => {

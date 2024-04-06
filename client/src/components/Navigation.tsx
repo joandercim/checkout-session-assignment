@@ -22,7 +22,7 @@ const Navigation = () => {
             <li>
               <NavLink to="/products">Products</NavLink>
             </li>
-            {customer === '' ? (
+            {!customer ? (
               <li>
                 <NavLink to="/login">
                   <button className="border my-2 py-1 px-4 rounded-md bg-orange-200 hover:bg-orange-300">

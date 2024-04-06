@@ -4,19 +4,25 @@ import { CustomerContext } from '../context/customer/CustomerContext';
 import { Customer } from '../models/Customer';
 import { CustomerLocation } from '../models/CustomerLocation';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import axios from 'axios';
 
 const LoginForm = () => {
   const [isRegistered, setIsRegistered] = useState(true);
-  const { login, logout, createCustomer, customer } = useContext(CustomerContext);
-
-  const navigate = useNavigate();
-
   const [newCustomerInput, setNewCustomerInput] = useState<Customer>(
     new Customer('1', '', '', '', new CustomerLocation('', '', ''))
   );
-
   const [inputEmail, setInputEmail] = useState('');
   const [inputPass, setInputPass] = useState('');
+
+  const [loginFailed, setLoginFailed] = useState<String>();
+  const [createCustomerFailed, setCreateCustomerFailed] = useState<String>();
+
+  const [shake, setShake] = useState(false);
+
+  const { login, logout, customer } = useContext(CustomerContext);
+
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     const statusCode = await login(inputEmail, inputPass);
@@ -24,18 +30,50 @@ const LoginForm = () => {
     if (statusCode === 200) {
       setInputEmail('');
       setInputPass('');
-      navigate('/')
+      navigate('/');
     } else if (statusCode === 401) {
-      console.log(statusCode);
+      setLoginFailed('Fel lösenord eller e-post.');
+
+      setShake(true);
+
+      setTimeout(() => {
+        setShake(false);
+      }, 300);
+
+      setTimeout(() => {
+        setLoginFailed(undefined);
+      }, 4000);
+      return;
     } else {
-      console.log(statusCode);
+      setLoginFailed('Något gick tyvärr fel.');
+      return;
     }
   };
 
-  
+  const handleCreateCustomer = async () => {
+    try {
+      const dbres = await axios.post(
+        import.meta.env.VITE_API_URL + '/customers/create',
+        newCustomerInput
+      );
 
-  const handleCreateCustomer = () => {
-    createCustomer(newCustomerInput);
+      const stripeRes = await axios.post(
+        import.meta.env.VITE_API_URL + '/stripe/customer/create',
+        newCustomerInput
+      );
+
+      if (dbres.status !== 201 && stripeRes.status !== 200) {
+        console.log('Fel vid skapande av kund eller Stripe-kund');
+        setCreateCustomerFailed('Något gick tyvärr fel.')
+        return;
+      }
+      
+      console.log('Customer created in stripe and db!');
+      setIsRegistered(true)
+    } catch (error) {
+      setCreateCustomerFailed('Något gick tyvärr fel.')
+      console.error('Fel vid skapande av kund eller Stripe-kund:', error);
+    }
   };
 
   const handleCreateCustomerChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -68,11 +106,39 @@ const LoginForm = () => {
 
   const handleLogout = () => {
     logout();
-  }
+  };
+
+  const shakeVariants = {
+    initial: {
+      scale: 1,
+    },
+    animate: {
+      scale: 1.01,
+      transform: [
+        'rotate(1deg)',
+        'rotate(-1deg)',
+        'rotate(1deg)',
+        'rotate(-1deg)',
+      ],
+      transition: {
+        transform: {
+          duration: 0.4,
+        },
+      },
+    },
+    exit: {
+      scale: 1,
+    },
+  };
 
   return (
-    <div className="border max-w-80 mx-auto p-2 mt-5 relative shadow-md">
-      {customer !== '' && <button onClick={handleLogout}>logout</button>}
+    <motion.div
+      initial={{ scale: 1 }}
+      variants={shakeVariants}
+      animate={shake ? 'animate' : 'exit'}
+      className="border max-w-80 mx-auto p-2 mt-5 relative shadow-md"
+    >
+      {customer && <button onClick={handleLogout}>logout</button>}
       <h1 className="text-center my-8">
         {isRegistered ? (
           <>
@@ -88,6 +154,16 @@ const LoginForm = () => {
           'Skapa konto'
         )}
       </h1>
+      {loginFailed && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: { duration: 0.5, delay: 0.2 } }}
+          exit={{ opacity: 0 }}
+          className="absolute -top-4 italic bg-red-400 text-white p-2 mx-4 rounded-full left-0 right-0 text-center"
+        >
+          {loginFailed ? loginFailed : createCustomerFailed}
+        </motion.p>
+      )}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -129,6 +205,7 @@ const LoginForm = () => {
               placeholder="Namn"
               value={newCustomerInput.name}
               onChange={(e) => handleCreateCustomerChange(e)}
+              required
             />
             <input
               type="email"
@@ -138,6 +215,7 @@ const LoginForm = () => {
               placeholder="E-post"
               value={newCustomerInput.email}
               onChange={(e) => handleCreateCustomerChange(e)}
+              required
             />
             <input
               type="text"
@@ -147,6 +225,7 @@ const LoginForm = () => {
               placeholder="Gatuadress"
               value={newCustomerInput.location.street}
               onChange={(e) => handleCreateCustomerChange(e)}
+              required
             />
             <input
               type="text"
@@ -156,6 +235,7 @@ const LoginForm = () => {
               placeholder="Postnummer"
               value={newCustomerInput.location.zipCode}
               onChange={(e) => handleCreateCustomerChange(e)}
+              required
             />
             <input
               type="text"
@@ -165,6 +245,7 @@ const LoginForm = () => {
               placeholder="Stad"
               value={newCustomerInput.location.city}
               onChange={(e) => handleCreateCustomerChange(e)}
+              required
             />
             <input
               type="password"
@@ -174,6 +255,7 @@ const LoginForm = () => {
               placeholder="Lösenord"
               value={newCustomerInput.password}
               onChange={(e) => handleCreateCustomerChange(e)}
+              required
             />
           </div>
         )}
@@ -184,12 +266,13 @@ const LoginForm = () => {
       {!isRegistered && (
         <button
           onClick={() => setIsRegistered(true)}
-          className="go-back-container inline-block absolute left-2 top-2 text-sm opacity-50 hover:opacity-90">
-            <FaArrowLeft className="inline" />{' '}
-            <span>Tillbaka till inloggning</span>
-          </button>
-        )}
-    </div>
+          className="go-back-container inline-block absolute left-2 top-2 text-sm opacity-50 hover:opacity-90"
+        >
+          <FaArrowLeft className="inline" />{' '}
+          <span>Tillbaka till inloggning</span>
+        </button>
+      )}
+    </motion.div>
   );
 };
 export default LoginForm;
