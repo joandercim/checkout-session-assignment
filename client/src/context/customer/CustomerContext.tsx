@@ -50,7 +50,6 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
 
         if (res.data.customer) {
           setCustomer(res.data.customer);
-          console.log(res.data.customer)
         }
       } catch (error) {
         console.error(error);

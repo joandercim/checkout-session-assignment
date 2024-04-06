@@ -21,7 +21,6 @@ const Cart = () => {
   useEffect(() => {
     if (customer) {
       setIsLoggedIn(true);
-      console.log(customer);
     } else {
       setIsLoggedIn(false);
     }

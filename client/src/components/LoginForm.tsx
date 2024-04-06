@@ -4,7 +4,7 @@ import { CustomerContext } from '../context/customer/CustomerContext';
 import { Customer } from '../models/Customer';
 import { CustomerLocation } from '../models/CustomerLocation';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion} from 'framer-motion';
 import axios from 'axios';
 
 const LoginForm = () => {
@@ -57,12 +57,7 @@ const LoginForm = () => {
         newCustomerInput
       );
 
-      const stripeRes = await axios.post(
-        import.meta.env.VITE_API_URL + '/stripe/customer/create',
-        newCustomerInput
-      );
-
-      if (dbres.status !== 201 && stripeRes.status !== 200) {
+      if (dbres.status !== 201) {
         console.log('Fel vid skapande av kund eller Stripe-kund');
         setCreateCustomerFailed('Något gick tyvärr fel.')
         return;
@@ -118,16 +113,21 @@ const LoginForm = () => {
         'rotate(1deg)',
         'rotate(-1deg)',
         'rotate(1deg)',
-        'rotate(-1deg)',
       ],
       transition: {
         transform: {
-          duration: 0.4,
+          duration: 0.2,
         },
       },
     },
     exit: {
       scale: 1,
+      transform: 'rotate(0deg)',
+      transition: {
+        transform: {
+          duration: .1
+        }
+      }
     },
   };
 

@@ -1,5 +1,5 @@
 class CustomerLocation {
-  constructor(street, streetNo, zipCode, city) {
+  constructor(street, zipCode, city) {
     this.street = street;
     this.zipCode = zipCode;
     this.city = city;

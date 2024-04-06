@@ -43,38 +43,6 @@ const createCheckoutSession = async (req, res) => {
   }
 };
 
-const createStripeCustomer = async (req, res) => {
-  const { name, email } = req.body;
-  const newStripeCustomer = new StripeCustomer(name, email);
-
-  try {
-    const customer = await stripe.customers.create(newStripeCustomer);
-    const customersInDB = await CustomerService.getAllCustomers();
-    const customerInDB = await CustomerService.getCurrentCustomerByEmail(email);
-
-    if (customerInDB) {
-      customerInDB.stripeId = customer.id;
-
-      const updatedCustomers = customersInDB.map((cust) => {
-        if (cust.email === email) {
-          console.log('Updating customer...');
-          return customerInDB;
-        } else {
-          return cust;
-        }
-      });
-      fs.writeFile(
-        './data/customers.json',
-        JSON.stringify(updatedCustomers, null, 2)
-      );
-    }
-
-    res.status(200).json({ success: true, customerId: customer.id });
-  } catch (e) {
-    res.status(400).json({ error: e.message });
-  }
-};
-
 const verifySession = async (req, res) => {
   const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
 
@@ -118,7 +86,6 @@ const verifySession = async (req, res) => {
 module.exports = {
   createCheckoutSession,
   getAllProducts,
-  createStripeCustomer,
   verifySession,
 };
 

@@ -32,7 +32,7 @@ const Navigation = () => {
               </li>
             ) : (
               <li>
-                <NavLink to="/login">
+                <NavLink to="/profile">
                   <button>
                     <FaUser className="inline text-xl text-gray-600 hover:text-gray-800" />
                   </button>

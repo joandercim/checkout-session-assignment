@@ -1,3 +1,4 @@
+const fs = require('fs').promises;
 const StripeCustomer = require('../models/StripeCustomer');
 const CustomerService = require('./CustomerService');
 
@@ -7,36 +8,26 @@ const stripe = initStripe();
 class StripeServices {
   constructor() {}
 
-  static async createStripeCustomer(name, email) {
-
-    console.log('StripeServices running')
-    const newStripeCustomer = new StripeCustomer(name, email);
+  static async createStripeCustomer(name, email, customers) {
+    const newCustomer = new StripeCustomer(name, email);
 
     try {
-      const customer = await stripe.customers.create(newStripeCustomer);
-      const customersInDB = await CustomerService.getAllCustomers();
-      const customerInDB = await CustomerService.getCurrentCustomerByEmail(
-        email
-      );
+      const customer = await stripe.customers.create(newCustomer);
+      const customerInDB = customers.find((c) => c.email === email);
+      customerInDB.stripeId = customer.id;
 
-      if (customerInDB) {
-        customerInDB.stripeId = customer.id;
+      const updatedCustomers = customers.map((cust) => {
+        if (cust.email === email) {
+          console.log('Updating customer...');
+          return customerInDB;
+        } else {
+          return cust;
+        }
+      });
 
-        const updatedCustomers = customersInDB.map((cust) => {
-          if (cust.email === email) {
-            console.log('Updating customer...');
-            return customerInDB;
-          } else {
-            return cust;
-          }
-        });
-        fs.writeFile(
-          './data/customers.json',
-          JSON.stringify(updatedCustomers, null, 2)
-        );
-      }
-    } catch (e) {
-      console.error(e);
+      return updatedCustomers;
+    } catch (error) {
+      console.log(error);
     }
   }
 }

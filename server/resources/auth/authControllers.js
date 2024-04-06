@@ -2,8 +2,10 @@ const bcrypt = require('bcrypt');
 const CustomerService = require('../../utils/CustomerService');
 
 const login = async (req, res) => {
+
+  const { name, email, location, stripeId, password } = req.body
   const currentCustomer = await CustomerService.getCurrentCustomerByEmail(
-    req.body.email
+    email
   );
 
   if (!currentCustomer)
@@ -12,7 +14,7 @@ const login = async (req, res) => {
       .json({ success: false, msg: 'Incorrect email or password.' });
 
   const passCheck = await bcrypt.compare(
-    req.body.password,
+    password,
     currentCustomer.password
   );
 
@@ -21,11 +23,11 @@ const login = async (req, res) => {
       .status(401)
       .json({ success: false, msg: 'Incorrect email or password.' });
 
-  req.session.customer = currentCustomer.email;
+  req.session.customer = email;
 
   res
     .status(200)
-    .json({ success: true, customer: currentCustomer });
+    .json({ success: true, customer: { name, email, location, stripeId} });
 };
 
 const logout = (req, res) => {
@@ -38,12 +40,14 @@ const authorize = async (req, res) => {
     return res
       .status(200)
       .json({ success: true, customer: null });
+  
+  const { name, email, location, stripeId } = await CustomerService.getCurrentCustomerByEmail(req.session.customer)
 
   res
     .status(200)
     .json({
       success: true,
-      customer: req.session.customer,
+      customer: { name, email, location, stripeId},
     });
 };
 
