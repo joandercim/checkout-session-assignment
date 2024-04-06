@@ -75,7 +75,10 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
         }
       );
 
+      console.log(res.data)
+
       setCustomer(res.data.customer);
+      console.log(res.data.customer)
 
       return res.status;
     } catch (error) {

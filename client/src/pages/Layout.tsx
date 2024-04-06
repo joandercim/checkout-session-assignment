@@ -5,7 +5,7 @@ import { CustomerProvider } from '../context/customer/CustomerContext';
 const Layout = () => {
   return (
     <CustomerProvider>
-      <div className="container mx-auto">
+      <div className="container mx-auto px-10">
         <header>
           <Navigation />
         </header>

@@ -11,9 +11,9 @@ const Navigation = () => {
 
   return (
     <div className="navigation-wrapper mb-20">
-      <nav className="flex justify-between items-center px-10">
+      <nav className="flex justify-between items-center">
         <div className="left-side-nav">
-          <Link to="/" className="p-2 block">
+          <Link to="/" className="block">
             <h1 className='text-2xl font-semibold'>The Color Shop</h1>
           </Link>
         </div>

@@ -44,7 +44,7 @@ const Cart = () => {
       );
 
       if (res.status === 401) {
-        console.log('You are not logged in');
+        console.error('You are not logged in');
         return;
       }
 

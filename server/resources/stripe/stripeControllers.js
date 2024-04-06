@@ -62,8 +62,11 @@ const verifySession = async (req, res) => {
       const order = {
         orderNumber: randomUUID(),
         orderId: session.id,
+        payment_method_types: session.payment_method_types,
+        payment_status: session.payment_status,
         customerId: session.customer_details.customer,
         customerName: session.customer_details.name,
+        customerEmail: session.customer_details.email,
         products: lineItems,
         total: session.amount_total / 100,
         timestamp: new Date().toLocaleString(),
@@ -88,9 +91,3 @@ module.exports = {
   getAllProducts,
   verifySession,
 };
-
-// Retrieve a session
-// OM payment_status === true så har allt gått bra.
-
-// Retreive a checkout sessions line items (hämta information om vad som fanns i ordern)
-// Webhooks kan vara något att använda. (fast inte i den här uppgiften)

@@ -9,9 +9,7 @@ const CustomerLocation = require('../../models/CustomerLocation');
 const fs = require('fs').promises;
 
 exports.getCustomers = async (req, res) => {
-  // TODO: Should only work if admin?
   const customers = await CustomerService.getAllCustomers();
-
   res.status(200).json({ success: true, customers });
 };
 
@@ -81,6 +79,11 @@ exports.createCustomer = async (req, res) => {
     JSON.stringify(updatedCustomers, null, 2)
   );
 
-
   res.status(201).json({ success: true, customer: newCustomer.email });
+};
+
+exports.getCustomerOrders = async (req, res) => {
+    const orders = await CustomerService.getOrdersByCustomerEmail(req.params.email);
+
+  res.status(200).json({ success: true, orders });
 };

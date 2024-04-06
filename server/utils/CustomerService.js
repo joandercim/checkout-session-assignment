@@ -17,6 +17,12 @@ class CustomerService {
     const customers = await this.getAllCustomers();
     return customers.find((u) => u.email === email);
   }
+
+  static async getOrdersByCustomerEmail(email) {
+    const orders = await fs.readFile('./data/orders.json');
+    const customerOrders = await JSON.parse(orders);
+    return customerOrders.filter((order) => order.customerEmail === email);
+  }
 }
 
 module.exports = CustomerService;

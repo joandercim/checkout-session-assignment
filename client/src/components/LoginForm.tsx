@@ -20,7 +20,7 @@ const LoginForm = () => {
 
   const [shake, setShake] = useState(false);
 
-  const { login, logout, customer } = useContext(CustomerContext);
+  const { login } = useContext(CustomerContext);
 
   const navigate = useNavigate();
 
@@ -99,10 +99,6 @@ const LoginForm = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-  };
-
   const shakeVariants = {
     initial: {
       scale: 1,
@@ -138,7 +134,6 @@ const LoginForm = () => {
       animate={shake ? 'animate' : 'exit'}
       className="border max-w-80 mx-auto p-2 mt-5 relative shadow-md"
     >
-      {customer && <button onClick={handleLogout}>logout</button>}
       <h1 className="text-center my-8">
         {isRegistered ? (
           <>
