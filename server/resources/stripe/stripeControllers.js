@@ -86,8 +86,16 @@ const verifySession = async (req, res) => {
   }
 };
 
+const getActiveCouponCodes = async (req, res) => {
+  const promotionCodes = await stripe.promotionCodes.list({
+    active: true,
+  });
+  res.status(200).json({ success: true, promotionCodes });
+};
+
 module.exports = {
   createCheckoutSession,
   getAllProducts,
   verifySession,
+  getActiveCouponCodes,
 };
