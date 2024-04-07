@@ -15,7 +15,8 @@ interface IPromotionCode {
     object: string;
     active: boolean;
     code: string;
-    coupon: ICoupon;
+    name: string,
+    percent_off: number
 }
 
 interface ICoupon {

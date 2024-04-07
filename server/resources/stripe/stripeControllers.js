@@ -28,6 +28,9 @@ const createCheckoutSession = async (req, res) => {
       customer: currentCustomer.stripeId,
       payment_method_types: ['card'],
       mode: 'payment',
+      discounts: [{
+        coupon: req.body.couponId,
+      }],
       line_items: req.body.checkoutItems,
       success_url: `${process.env.CLIENT_URL}/success`,
       cancel_url: `${process.env.CLIENT_URL}/cart`,
@@ -87,9 +90,7 @@ const verifySession = async (req, res) => {
 };
 
 const getActiveCouponCodes = async (req, res) => {
-  const promotionCodes = await stripe.promotionCodes.list({
-    active: true,
-  });
+  const promotionCodes = await stripe.coupons.list();
   res.status(200).json({ success: true, promotionCodes });
 };
 

@@ -12,6 +12,7 @@ const Cart = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [promotionCode, setPromotionCode] = useState<string>('');
   const [verifiedDiscount, setVerifiedDiscount] = useState<number | null>();
+  const [promitionId, setPromotionId] = useState<string | null>()
 
   const navigate = useNavigate();
 
@@ -46,6 +47,7 @@ const Cart = () => {
         {
           checkoutItems,
           customer: customer?.email,
+          couponId: promitionId
         },
         {
           withCredentials: true,
@@ -78,11 +80,12 @@ const Cart = () => {
       const promotionCodes = response.data.promotionCodes.data;
 
       const isValid = promotionCodes.find(
-        (c) => c.code === promotionCode.toUpperCase()
+        (c) => c.name === promotionCode.toUpperCase()
       );
 
       if (isValid) {
-        setVerifiedDiscount(isValid.coupon.percent_off);
+        setVerifiedDiscount(isValid.percent_off);
+        setPromotionId(isValid.id)
       }
     } catch (error) {
       console.error('Something went wrong', error);
@@ -132,7 +135,7 @@ const Cart = () => {
         {itemsInCart.length !== 0 && (
           <div>
             <p className="py-2 my-2 px-2 font-semibold">
-              <p className='block'>Total:</p> {verifiedDiscount && <span className='text-red-500 line-through italic'>{grandTotal / verifiedDiscount * 100} SEK</span>} {grandTotal} SEK 
+              <span className='block'>Total:</span> {verifiedDiscount && <span className='text-red-500 line-through italic'>{grandTotal / verifiedDiscount * 100} SEK</span>} {grandTotal} SEK 
             </p>
             {isLoggedIn ? (
               <button
