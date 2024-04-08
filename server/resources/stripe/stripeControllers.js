@@ -92,6 +92,10 @@ const verifySession = async (req, res) => {
         customerId: session.customer_details.customer,
         customerName: session.customer_details.name,
         customerEmail: session.customer_details.email,
+        servicePoint: {
+          name: req.body.servicePoint.name,
+          servicePointId: req.body.servicePoint.servicePointId
+        },
         products: lineItems,
         total: session.amount_total / 100,
         timestamp: new Date().toLocaleString(),

@@ -5,6 +5,7 @@ const authRouter = require('./resources/auth/authRouter');
 const cookieSession = require('cookie-session');
 const customerRouter = require('./resources/customers/customerRouter');
 const stripeRouter = require('./resources/stripe/stripeRouter');
+const postnordRouter = require('./resources/postnord/postnordRouter');
 
 const app = express();
 
@@ -30,5 +31,6 @@ app.use(
 app.use('/api/customers', customerRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/stripe', stripeRouter);
+app.use('/api/postnord', postnordRouter);
 
 app.listen(PORT, () => console.log('Server listening on port', PORT));

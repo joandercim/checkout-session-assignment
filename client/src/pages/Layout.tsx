@@ -12,7 +12,6 @@ const Layout = () => {
         <main className="min-h-[80dvh]">
           <Outlet />
         </main>
-        <footer>footer</footer>
       </div>
     </CustomerProvider>
   );

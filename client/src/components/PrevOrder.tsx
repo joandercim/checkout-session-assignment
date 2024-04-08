@@ -12,8 +12,6 @@ const PrevOrder = ({ order }: IOrderProps) => {
   const accordionControls = useAnimationControls();
   const liControls = useAnimationControls();
 
-  const orderItems = order.products.data;
-
   const toggleAccord = () => {
     if (toggled === false) {
       setToggled(true);
@@ -71,9 +69,10 @@ const PrevOrder = ({ order }: IOrderProps) => {
         key={order.timestamp}
       >
         <div className="accordion-top flex justify-between items-center mb-4">
-          <h2 className="w-[40%] inline font-semibold">
-            Orderdatum: {order.timestamp.split(' ')[0]}
+          <h2 className="inline font-semibold">
+             OrderNummer: {order.orderNumber}
           </h2>
+          <span>Orderdatum: {order.timestamp.split(' ')[0]}</span>
           <span>{order.payment_status === 'paid' ? 'Betald' : 'Obetald'}</span>
           <span className="w-48">{order.total} SEK</span>
           <button
@@ -98,8 +97,8 @@ const PrevOrder = ({ order }: IOrderProps) => {
               <span className="w-40 text-right">Antal</span>
             </li>
             {order.products.data.map((item, index) => (
-              <li key={index} className="flex justify-between bg-gray-100 my-2 p-1">
-                <span className="w-40">{item.description}</span>
+              <li key={index} className={`flex justify-between p-1 ${index % 2 === 0 ? 'bg-gray-100' : ''}`}>
+                <span className='w-40'>{item.description}</span>
                 <span className='w-40'>{+item.price.unit_amount / 100} kr</span>
                 <span className="w-40 text-right">{+item.quantity}</span>
               </li>
