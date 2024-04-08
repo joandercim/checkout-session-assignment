@@ -28,9 +28,11 @@ const createCheckoutSession = async (req, res) => {
       customer: currentCustomer.stripeId,
       payment_method_types: ['card'],
       mode: 'payment',
-      discounts: [{
-        coupon: req.body.couponId,
-      }],
+      discounts: [
+        {
+          coupon: req.body.couponId,
+        },
+      ],
       line_items: req.body.checkoutItems,
       success_url: `${process.env.CLIENT_URL}/success`,
       cancel_url: `${process.env.CLIENT_URL}/cart`,
@@ -62,8 +64,28 @@ const verifySession = async (req, res) => {
         session.id
       );
 
+      let newOrderNumber;
+
+      const year = new Date()
+        .getFullYear()
+        .toString()
+        .split('')
+        .splice(2, 4)
+        .join('');
+    
+      if (parsedOrders.length <= 0) {
+        initalOrderNo = 1000;
+        newOrderNumber = year + initalOrderNo;
+      } else {
+        const currentOrderNumber =
+          parsedOrders[parsedOrders.length - 1].orderNumber
+            .toString()
+            .substring(2) * 1;
+        newOrderNumber = parseInt(year + currentOrderNumber) + 1;
+      }
+
       const order = {
-        orderNumber: randomUUID(),
+        orderNumber: newOrderNumber,
         orderId: session.id,
         payment_method_types: session.payment_method_types,
         payment_status: session.payment_status,
