@@ -3,14 +3,16 @@ const StripeCustomer = require('../models/StripeCustomer');
 const CustomerService = require('./CustomerService');
 
 const initStripe = require('../stripe');
+const StripeCustomerLocation = require('../models/StripeCustomerLocation');
 const stripe = initStripe();
 
 class StripeServices {
   constructor() {}
 
-  static async createStripeCustomer(name, email, customers) {
-    const newCustomer = new StripeCustomer(name, email);
+  static async createStripeCustomer(name, email, location, customers) {
+    const newCustomer = new StripeCustomer(name, email, new StripeCustomerLocation(location.city, location.street, location.zipCode));
 
+    console.log(newCustomer)
     try {
       const customer = await stripe.customers.create(newCustomer);
       const customerInDB = customers.find((c) => c.email === email);

@@ -1,7 +1,8 @@
 class StripeCustomer {
-  constructor(name, email) {
+  constructor(name, email, address) {
     this.name = name;
     this.email = email;
+    this.address = address;
   }
 }
 

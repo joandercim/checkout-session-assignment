@@ -6,6 +6,20 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ICouponResponse } from '../models/ICouponResponse';
 
+interface IClosestServicePoints {
+  servicePoints: IServicePoint[];
+}
+
+interface IServicePoint {
+    name: string,
+    visitingAddress: {
+      city: string, 
+      streetName: string, 
+      streetNumber: string, 
+      postalCode: string
+    }
+}
+
 const Cart = () => {
   const { itemsInCart, removeProduct, customer } = useContext(CustomerContext);
   const [grandTotal, setGrandTotal] = useState(0);
@@ -13,6 +27,8 @@ const Cart = () => {
   const [promotionCode, setPromotionCode] = useState<string>('');
   const [verifiedDiscount, setVerifiedDiscount] = useState<number | null>();
   const [promitionId, setPromotionId] = useState<string | null>()
+
+  const [closestServicePoints, setClosestServicePoints] = useState<IClosestServicePoints>()
 
   const navigate = useNavigate();
 
@@ -35,6 +51,19 @@ const Cart = () => {
       setIsLoggedIn(false);
     }
   }, [customer]);
+
+  // useEffect(() => {
+  //   if (closestServicePoints || itemsInCart.length < 1) return;
+  //   const getServicePoints = async () => {
+  //     console.log('Fetching service points')
+  //     console.log(customer?.location.zipCode)
+  //     const res = await axios.get(`atapi2.postnord.com/rest/businesslocation/v5/servicepoints/nearest/byaddress?apikey=638daf2d6b6f9ee6f76cdee1d8266030&returnType=json&countryCode=SE&postalCode=${customer?.location.zipCode}&numberOfServicePoints=5`)
+  //     console.log(res)
+  //   }
+
+  //   getServicePoints();
+
+  // }, [])
 
   const handleCheckout = async () => {
     const checkoutItems = itemsInCart.map(

@@ -71,6 +71,7 @@ exports.createCustomer = async (req, res) => {
   const updatedCustomers = await StripeServices.createStripeCustomer(
     req.body.name,
     req.body.email,
+    req.body.location,
     customers
   );
 
