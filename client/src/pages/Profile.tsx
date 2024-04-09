@@ -39,7 +39,7 @@ const Profile = () => {
       <div className='flex justify-end mt-10 mr-2'>
       <button
         onClick={logout}
-        className="px-3 py-1 rounded-md border shadow-md active:shadow-none bg-green-300 hover:bg-green-400"
+        className="px-3 py-1 rounded-md border shadow-md active:shadow-none bg-red-300 hover:bg-red-400"
       >
         Logga ut
       </button>

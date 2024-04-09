@@ -227,7 +227,9 @@ const Cart = () => {
             </div>
           </div>
         </div>
-        {isLoggedIn ? (
+        {itemsInCart.length > 0 && (
+          <>
+          {isLoggedIn ? (
           <button
             onClick={handleCheckout}
             className="bg-green-400 py-2 ml-2 px-5 hover:bg-green-600 uppercase rounded-md"
@@ -246,6 +248,8 @@ const Cart = () => {
               Logga in
             </button>
           </div>
+        )}
+          </>
         )}
       </div>
     </>
