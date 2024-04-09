@@ -11,6 +11,7 @@ interface ICustomerContext {
   itemsInCart: CartItem[];
   addToCart: (product: IProduct, price: number) => void;
   removeProduct: (id: string) => void;
+  updateCartQuantity: (newQuantity: string, productId: string) => void;
   login: (email: string, password: string) => Promise<Number | undefined>;
   logout: () => void;
   createCustomer: (customer: Customer) => void;
@@ -26,6 +27,7 @@ export const CustomerContext = createContext<ICustomerContext>({
   itemsInCart: [],
   addToCart: () => {},
   removeProduct: () => {},
+  updateCartQuantity: () => {},
   login: () => {
     return Promise.reject('login function not implemented');
   },
@@ -121,8 +123,7 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
         return;
       }
 
-      console.log('Customer created in stripe and db!')
-
+      console.log('Customer created in stripe and db!');
     } catch (error) {
       console.error('Fel vid skapande av kund eller Stripe-kund:', error);
     }
@@ -153,23 +154,26 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
   };
 
   const removeProduct = (id: string) => {
-    const itemToEdit = itemsInCart.find((item) => item.productId === id);
+    const itemToDelete = itemsInCart.find((item) => item.productId === id);
+
+    if (itemToDelete) {
+      const updatedCart = itemsInCart.filter(
+        (itemInCart) => itemInCart.productId !== id
+      );
+      setItemsInCart(updatedCart);
+    }
+  };
+
+  const updateCartQuantity = (newQuantity: string, productId: string) => {
+    const itemToEdit = itemsInCart.find((item) => item.productId === productId);
 
     if (itemToEdit) {
-      let updatedCart;
-
-      if (itemToEdit.quantity > 1) {
-        updatedCart = itemsInCart.map((itemInCart) => {
-          if (itemInCart.productId === id) {
-            return { ...itemInCart, quantity: itemInCart.quantity - 1 };
-          }
-          return itemInCart;
-        });
-      } else {
-        updatedCart = itemsInCart.filter(
-          (itemInCart) => itemInCart.productId !== id
-        );
-      }
+      const updatedCart = itemsInCart.map((itemInCart) => {
+        if (itemInCart.productId === productId) {
+          return { ...itemInCart, quantity: +newQuantity };
+        }
+        return itemInCart;
+      });
 
       setItemsInCart(updatedCart);
     }
@@ -183,6 +187,7 @@ export const CustomerProvider = ({ children }: ICustomerProviderProps) => {
         customer,
         addToCart,
         removeProduct,
+        updateCartQuantity,
         login,
         logout,
         createCustomer,
