@@ -5,6 +5,7 @@ import { CheckoutItem } from '../models/CheckoutItem';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ICouponResponse } from '../models/ICouponResponse';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 interface IServicePoint {
   name: string;
@@ -23,7 +24,8 @@ interface ISelectedServicePoint {
 }
 
 const Cart = () => {
-  const { itemsInCart, removeProduct, customer, updateCartQuantity } = useContext(CustomerContext);
+  const { itemsInCart, removeProduct, customer, updateCartQuantity } =
+    useContext(CustomerContext);
   const [grandTotal, setGrandTotal] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [promotionCode, setPromotionCode] = useState<string>('');
@@ -33,6 +35,7 @@ const Cart = () => {
     useState<ISelectedServicePoint | null>();
   const [closestServicePoints, setClosestServicePoints] =
     useState<IServicePoint[]>();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -49,20 +52,18 @@ const Cart = () => {
   }, [itemsInCart, verifiedDiscount]);
 
   useEffect(() => {
-    if (customer) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, [customer]);
-
-  useEffect(() => {
-    if (closestServicePoints || itemsInCart.length < 1) return;
+    if (closestServicePoints || !itemsInCart.length && !customer) return;
+    setLoading(true);
     const getServicePoints = async () => {
-      const res = await axios.get(
-        `http://localhost:3000/api/postnord/servicepoints/${customer?.location.zipCode}`
-      );
-      setClosestServicePoints(res.data.servicePoints);
+      try {
+        const res = await axios.get(
+          `http://localhost:3000/api/postnord/servicepoints/${customer?.location.zipCode}`
+        );
+        setClosestServicePoints(res.data.servicePoints);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
     };
     getServicePoints();
   }, [itemsInCart]);
@@ -139,16 +140,19 @@ const Cart = () => {
     });
   };
 
-  const handleUpdateQuantity = (e: ChangeEvent<HTMLSelectElement>, productId: string) => {
-    updateCartQuantity(e.target.value, productId)
-  }
+  const handleUpdateQuantity = (
+    e: ChangeEvent<HTMLSelectElement>,
+    productId: string
+  ) => {
+    updateCartQuantity(e.target.value, productId);
+  };
 
   return (
     <>
       <div>
         <div className="flex flex-row-reverse container gap-10">
           {itemsInCart.length !== 0 && (
-            <div className="promotion-container border w-1/5 mt-4 flex flex-col items-center p-3 shadow-lg max-h-56">
+            <form className="promotion-container border w-1/5 mt-4 flex flex-col items-center p-3 shadow-lg max-h-56">
               <h2 className="my-3 font-semibold">Har du en rabattkod?</h2>
               <input
                 value={promotionCode}
@@ -158,12 +162,15 @@ const Cart = () => {
                 name="promotion"
               />
               <button
-                onClick={handlePromotion}
+                onClick={(e) => {
+                  e.preventDefault()
+                  handlePromotion();
+                }}
                 className="bg-green-400 py-1 px-3 my-3 hover:bg-green-500 rounded-md"
               >
                 Aktivera
               </button>
-            </div>
+            </form>
           )}
           <div className="mx-automax-w[80%] flex-grow">
             <ul>
@@ -188,7 +195,9 @@ const Cart = () => {
                           className="border px-2 py-1 w-14 rounded-md border-gray-400"
                           id="quantity"
                           value={item.quantity}
-                          onChange={(e) => handleUpdateQuantity(e, item.productId)}
+                          onChange={(e) =>
+                            handleUpdateQuantity(e, item.productId)
+                          }
                         >
                           <option value="1">1</option>
                           <option value="2">2</option>
@@ -204,11 +213,13 @@ const Cart = () => {
                       </div>
                     </div>
 
-                    <div className='flex items-end justify-between flex-col h-full'>
+                    <div className="flex items-end justify-between flex-col h-full">
                       <button onClick={() => handleDelete(item.productId)}>
                         <FaTrash className="inline mt-7" />
                       </button>
-                      <span className='block font-semibold '>{item.price * item.quantity} kr</span>
+                      <span className="block font-semibold ">
+                        {item.price * item.quantity} kr
+                      </span>
                     </div>
                   </li>
                 ))
@@ -230,8 +241,23 @@ const Cart = () => {
               </div>
             )}
             <div className="flex gap-4">
-              {closestServicePoints &&
-                itemsInCart.length > 0 &&
+              {(loading && !closestServicePoints && itemsInCart.length > 0) && (
+                <div className="mx-auto">
+                  <h4 className="text-center text-xl mb-5">
+                    Laddar Postnord Servicepoints...
+                  </h4>
+                  <ClipLoader
+                    color={'blue'}
+                    loading={loading}
+                    cssOverride={{ display: 'block', margin: 'auto' }}
+                    size={50}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                </div>
+              )}
+              {(closestServicePoints &&
+                itemsInCart.length > 0) && 
                 closestServicePoints.map((point) => (
                   <div key={point.servicePointId} className="w-full">
                     <input
@@ -251,7 +277,7 @@ const Cart = () => {
                       htmlFor={point.servicePointId}
                     >
                       <p className="font-semibold">{point.name}</p>
-                      <p className="">
+                      <p>
                         {point.deliveryAddress.streetName}{' '}
                         {point.deliveryAddress.streetNumber}
                       </p>
@@ -264,7 +290,7 @@ const Cart = () => {
         </div>
         {itemsInCart.length > 0 && (
           <>
-            {isLoggedIn ? (
+            {customer ? (
               <button
                 onClick={handleCheckout}
                 className="bg-green-400 py-2 ml-2 px-5 hover:bg-green-600 uppercase rounded-md"
