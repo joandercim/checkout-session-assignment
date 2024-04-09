@@ -233,7 +233,7 @@ const Cart = () => {
                   <span className="block">Total:</span>{' '}
                   {verifiedDiscount && (
                     <span className="text-red-500 line-through italic">
-                      {(grandTotal / verifiedDiscount) * 100} SEK
+                      {Math.ceil((grandTotal / verifiedDiscount) * 100)} SEK
                     </span>
                   )}{' '}
                   {grandTotal} SEK
