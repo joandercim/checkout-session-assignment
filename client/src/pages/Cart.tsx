@@ -1,11 +1,11 @@
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CustomerContext } from '../context/customer/CustomerContext';
-import { FaTrash } from 'react-icons/fa';
 import { CheckoutItem } from '../models/CheckoutItem';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ICouponResponse } from '../models/ICouponResponse';
 import ClipLoader from 'react-spinners/ClipLoader';
+import CartProductsList from '../components/CartProductsList';
 
 interface IServicePoint {
   name: string;
@@ -24,10 +24,9 @@ interface ISelectedServicePoint {
 }
 
 const Cart = () => {
-  const { itemsInCart, removeProduct, customer, updateCartQuantity } =
+  const { itemsInCart, customer } =
     useContext(CustomerContext);
   const [grandTotal, setGrandTotal] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [promotionCode, setPromotionCode] = useState<string>('');
   const [verifiedDiscount, setVerifiedDiscount] = useState<number | null>();
   const [promitionId, setPromotionId] = useState<string | null>();
@@ -109,10 +108,6 @@ const Cart = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
-    removeProduct(id);
-  };
-
   const handlePromotion = async () => {
     try {
       const response = await axios.get<ICouponResponse>(
@@ -138,13 +133,6 @@ const Cart = () => {
       name,
       servicePointId,
     });
-  };
-
-  const handleUpdateQuantity = (
-    e: ChangeEvent<HTMLSelectElement>,
-    productId: string
-  ) => {
-    updateCartQuantity(e.target.value, productId);
   };
 
   return (
@@ -175,54 +163,7 @@ const Cart = () => {
           <div className="mx-automax-w[80%] flex-grow">
             <ul>
               {itemsInCart.length !== 0 ? (
-                itemsInCart.map((item, index) => (
-                  <li
-                    key={`${item.productId}_${index}`}
-                    className="px-2 py-2 my-2 w-full h-28 border-b-2 flex justify-between items-center"
-                  >
-                    <div className="flex">
-                      <div className="min-w-20 min-h-20 mr-3">
-                        <img
-                          src={item.images[0]}
-                          className="w-20 h-20"
-                          alt={item.name}
-                        />
-                      </div>
-                      <div>
-                        <h2 className="w-[40%] mb-2">{item.name}</h2>
-                        <select
-                          name="quantity"
-                          className="border px-2 py-1 w-14 rounded-md border-gray-400"
-                          id="quantity"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            handleUpdateQuantity(e, item.productId)
-                          }
-                        >
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                          <option value="6">6</option>
-                          <option value="7">7</option>
-                          <option value="8">8</option>
-                          <option value="9">9</option>
-                          <option value="10">10</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="flex items-end justify-between flex-col h-full">
-                      <button onClick={() => handleDelete(item.productId)}>
-                        <FaTrash className="inline mt-7" />
-                      </button>
-                      <span className="block font-semibold ">
-                        {item.price * item.quantity} kr
-                      </span>
-                    </div>
-                  </li>
-                ))
+                <CartProductsList />
               ) : (
                 <p className="text-center text-2xl">Din varukorg är tom.</p>
               )}
