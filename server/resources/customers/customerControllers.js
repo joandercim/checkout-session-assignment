@@ -84,7 +84,9 @@ exports.createCustomer = async (req, res) => {
 };
 
 exports.getCustomerOrders = async (req, res) => {
-    const orders = await CustomerService.getOrdersByCustomerEmail(req.params.email);
+  const orders = await CustomerService.getOrdersByCustomerEmail(
+    req.params.email
+  );
 
   res.status(200).json({ success: true, orders });
 };

@@ -65,7 +65,7 @@ const PrevOrder = ({ order }: IOrderProps) => {
         variants={toggleVariants}
         animate={accordionControls}
         id={order.timestamp.replace(' ', '')}
-        className={`px-2 mt-3 w-full border-b-2 overflow-hidden`}
+        className={` mt-3 w-full border-b-2 overflow-hidden`}
         key={order.timestamp}
       >
         <div className="accordion-top flex justify-between items-center mb-4">

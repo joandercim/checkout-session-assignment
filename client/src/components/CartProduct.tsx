@@ -24,7 +24,7 @@ const CartProduct = ({ item }: ICartProductProps) => {
         <h2 className="w-[40%] mb-2">{item.name}</h2>
         <select
           name="quantity"
-          className="border px-2 py-1 w-14 rounded-md border-gray-400"
+          className="border px-1 py-1 w-14 rounded-md border-gray-400"
           id="quantity"
           value={item.quantity}
           onChange={(e) =>

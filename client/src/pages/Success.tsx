@@ -1,10 +1,23 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 const Success = () => {
   const [isVerified, setIsVerified] = useState(false);
+  const [orderComplete, setOrderComplete] = useState(false);
+  const [countDown, setCountDown] = useState(5)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
+    if (isVerified && orderComplete) {
+      countDown > 0 && ((setInterval(() => setCountDown((prev) => prev - 1), 1000)))
+      setTimeout(() => {
+        navigate('/profile')
+      }, 5000);
+    }
+
     if (isVerified) return;
     const verifySession = async () => {
       const sessionId: string | null = localStorage.getItem('sessionId');
@@ -20,11 +33,27 @@ const Success = () => {
         );
 
         setIsVerified(res.data.verified);
+        setOrderComplete(true)
       }
+      console.log(countDown)
     };
-
+    
     verifySession();
   }, [isVerified]);
-  return <div>{!isVerified ? 'Laddar...' : 'Tack för din order!'}</div>;
+  return (
+    <div>{!isVerified && !orderComplete? (
+      <div className='mx-auto w-1/5'>
+        <h2>Vänta medan vi hanterar din order</h2>
+        <ClipLoader
+                    color={'blue'}
+                    loading={!isVerified}
+                    cssOverride={{ display: 'block', margin: 'auto' }}
+                    size={50}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+      </div>
+    ) : <h2>{`Tack för din order! Du omdirigeras om ${countDown} sekunder.`}</h2>}</div>
+  );
 };
 export default Success;

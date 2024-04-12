@@ -14,19 +14,19 @@ const Navigation = () => {
       <nav className="flex justify-between items-center">
         <div className="left-side-nav">
           <Link to="/" className="block">
-            <h1 className='text-2xl font-semibold'>The Color Shop</h1>
+            <h1 className='text-2xl font-semibold uppercase'>Färgaffärn</h1>
           </Link>
         </div>
         <div className="right-side-nav">
           <ul className="flex gap-6 items-center h-16">
             <li>
-              <NavLink to="/products">Products</NavLink>
+              <NavLink to="/products">Produkter</NavLink>
             </li>
             {!customer ? (
               <li>
                 <NavLink to="/login">
                   <button className="border my-2 py-1 px-4 rounded-md bg-orange-200 hover:bg-orange-300">
-                    Login
+                    Logga in
                   </button>
                 </NavLink>
               </li>

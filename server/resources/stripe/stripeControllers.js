@@ -1,7 +1,5 @@
-const StripeCustomer = require('../../models/StripeCustomer');
 const initStripe = require('../../stripe');
 const CustomerService = require('../../utils/CustomerService');
-const { randomUUID } = require('crypto');
 const fs = require('fs').promises;
 
 const stripe = initStripe();
@@ -72,7 +70,7 @@ const verifySession = async (req, res) => {
         .split('')
         .splice(2, 4)
         .join('');
-    
+
       if (parsedOrders.length <= 0) {
         initalOrderNo = 1000;
         newOrderNumber = year + initalOrderNo;
@@ -94,7 +92,7 @@ const verifySession = async (req, res) => {
         customerEmail: session.customer_details.email,
         servicePoint: {
           name: req.body.servicePoint.name,
-          servicePointId: req.body.servicePoint.servicePointId
+          servicePointId: req.body.servicePoint.servicePointId,
         },
         products: lineItems,
         total: session.amount_total / 100,

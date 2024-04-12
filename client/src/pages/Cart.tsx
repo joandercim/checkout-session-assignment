@@ -145,9 +145,10 @@ const Cart = () => {
               <input
                 value={promotionCode}
                 onChange={(e) => setPromotionCode(e.target.value)}
-                className="rounded-md border"
+                className="rounded-md border p-1 placeholder:italic"
                 type="text"
                 name="promotion"
+                placeholder='SUMMER50'
               />
               <button
                 onClick={(e) => {

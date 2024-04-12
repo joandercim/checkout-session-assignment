@@ -28,11 +28,12 @@ const Product = ({ product }: IProductProps) => {
       <h2>{product.name}</h2>
       <p className="text-sm">{product.description}</p>
       <p className="text-xs mt-4">{itemPrice} kr</p>
+      <hr className='w-4/5 mx-auto my-2' />
       <button
         onClick={() => {
           itemPrice && handleAddToCart(product, itemPrice);
         }}
-        className="my-2 border text-sm border-slate-700 px-4 py-1 w-5/6"
+        className="mb-2 text-sm px-4 py-1 w-5/6 hover:bg-gray-100 rounded-md"
       >
         Lägg i kundvagn
       </button>

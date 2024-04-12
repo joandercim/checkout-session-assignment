@@ -26,12 +26,12 @@ const Profile = () => {
 
   return customer ? (
     <>
-    <div>
+    <div className='p-2'>
       <h2 className='text-2xl'>{customer?.name}</h2>
-      <hr className='mb-1 font-semibold mt-2'/>
-      <h2 className='italic'>Tidigare ordrar</h2>
+      <hr className='font-semibold my-1'/>
+      <h2 className='uppercase'>Tidigare ordrar</h2>
       {customerOrders && (
-        <ul className='mb-4'>
+        <ul className='mt-10'>
           {customerOrders?.map((order) => <PrevOrder key={order.timestamp} order={order} />)}
         </ul>
       )}
@@ -39,7 +39,7 @@ const Profile = () => {
       <div className='flex justify-end mt-10 mr-2'>
       <button
         onClick={logout}
-        className="px-3 py-1 rounded-md border shadow-md active:shadow-none bg-red-300 hover:bg-red-400"
+        className="px-3 mb-10 py-1 rounded-md border shadow-md active:shadow-none bg-red-300 hover:bg-red-400"
       >
         Logga ut
       </button>
