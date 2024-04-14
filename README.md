@@ -39,12 +39,12 @@ POSTNORD_API_KEY={{POSTNORD_API_KEY}}
 ## Körning av projektet
 För att starta servern och klienten, kör följande kommandon i separata terminalfönster:
 - För servern:
-  1. cd server
-  2. npm run dev
+1. cd server
+2. npm run dev
 
 - För klienten:
-  1. cd client
-  2. npm run dev
+1. cd client
+2. npm run dev
    
 ## Uppgift
 ### Krav för godkänt:
@@ -60,7 +60,7 @@ För att starta servern och klienten, kör följande kommandon i separata termin
 
 Ordern skall som minst innehålla information om ordernummer, datum, kund, produkter, totalpris och utlämningsställe.
 
-### _Uppfyllda krav godkänt: **1-9**_
+#### _Uppfyllda krav godkänt: 1-9_
 
 ### Krav för väl godkänt:
 1. Alla punkter för godkänt är uppfyllda
@@ -68,4 +68,4 @@ Ordern skall som minst innehålla information om ordernummer, datum, kund, produ
 3. Man skall som inloggad kunna se sina lagda ordrar.
 4. Innan man betalar behöver användaren fylla i sin adress och utifrån adressen välja ett utlämningsställe där paketet skall hämtas (PostNord API).
 
-### _Uppfyllda krav väl godkänt: **1-4**_
+#### _Uppfyllda krav väl godkänt: 1-4_
