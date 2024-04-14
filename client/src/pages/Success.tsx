@@ -14,6 +14,8 @@ const Success = () => {
     if (isVerified && orderComplete) {
       countDown > 0 && ((setInterval(() => setCountDown((prev) => prev - 1), 1000)))
       setTimeout(() => {
+        localStorage.removeItem('sessionId');
+        localStorage.removeItem('servicePoint');
         navigate('/profile')
       }, 5000);
     }
@@ -35,7 +37,6 @@ const Success = () => {
         setIsVerified(res.data.verified);
         setOrderComplete(true)
       }
-      console.log(countDown)
     };
     
     verifySession();

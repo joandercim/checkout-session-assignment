@@ -4,7 +4,7 @@ const customerSchema = Joi.object({
   _id: Joi.string(),
   name: Joi.string().required(),
   email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
+  password: Joi.string().required(),
   location: Joi.object({
     street: Joi.string().required(),
     zipCode: Joi.string().required(),
