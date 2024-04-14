@@ -12,12 +12,17 @@ I det här projektet har vi skapat en webshop som möjliggör registrering och i
 ## Installation
 1. Klona detta GitHub-repository.
 2. Installera beroenden i både server- och client-mappen.
-   - cd server
-   - npm install
-   - cd..
-   - cd client
-   - npm install
+  - För server:
+  ```
+  cd server
+  npm install
+  ```
 
+    - För client:
+  ```
+  cd server
+  npm install
+  ```
 
 ## Konfiguration
 Skapa en `.env`-fil i både `server` och `client`. Dessa filer ska innehålla nödvändiga API-nycklar och konfigurationer specifika för din miljö.
