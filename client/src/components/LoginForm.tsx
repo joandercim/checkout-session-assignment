@@ -4,7 +4,7 @@ import { CustomerContext } from '../context/customer/CustomerContext';
 import { Customer } from '../models/Customer';
 import { CustomerLocation } from '../models/CustomerLocation';
 import { useNavigate } from 'react-router-dom';
-import { motion} from 'framer-motion';
+import { motion } from 'framer-motion';
 import axios from 'axios';
 
 const LoginForm = () => {
@@ -52,6 +52,16 @@ const LoginForm = () => {
 
   const handleCreateCustomer = async () => {
     try {
+      const { data } = await axios.get(
+        'http://localhost:3000/api/postnord/validate_postal_code/' +
+          newCustomerInput.location.zipCode
+      );
+
+      if (!data.isValid) {
+        alert('Du måste fylla i ett giltigt postnummer.');
+        return;
+      }
+
       const dbres = await axios.post(
         import.meta.env.VITE_API_URL + '/customers/create',
         newCustomerInput
@@ -59,14 +69,13 @@ const LoginForm = () => {
 
       if (dbres.status !== 201) {
         console.log('Fel vid skapande av kund eller Stripe-kund');
-        setCreateCustomerFailed('Något gick tyvärr fel.')
+        setCreateCustomerFailed('Något gick tyvärr fel.');
         return;
       }
-      
-      console.log('Customer created in stripe and db!');
-      setIsRegistered(true)
+
+      setIsRegistered(true);
     } catch (error) {
-      setCreateCustomerFailed('Något gick tyvärr fel.')
+      setCreateCustomerFailed('Något gick tyvärr fel.');
       console.error('Fel vid skapande av kund eller Stripe-kund:', error);
     }
   };
@@ -105,11 +114,7 @@ const LoginForm = () => {
     },
     animate: {
       scale: 1.01,
-      transform: [
-        'rotate(1deg)',
-        'rotate(-1deg)',
-        'rotate(1deg)',
-      ],
+      transform: ['rotate(1deg)', 'rotate(-1deg)', 'rotate(1deg)'],
       transition: {
         transform: {
           duration: 0.2,
@@ -121,9 +126,9 @@ const LoginForm = () => {
       transform: 'rotate(0deg)',
       transition: {
         transform: {
-          duration: .1
-        }
-      }
+          duration: 0.1,
+        },
+      },
     },
   };
 
