@@ -21,7 +21,7 @@ I det här projektet har vi skapat en webshop som möjliggör registrering och i
   - För client:
 
   ```
-  cd server
+  cd client
   npm install
   ```
 
