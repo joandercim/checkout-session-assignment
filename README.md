@@ -18,7 +18,8 @@ I det här projektet har vi skapat en webshop som möjliggör registrering och i
   npm install
   ```
 
-    - För client:
+  - För client:
+
   ```
   cd server
   npm install
@@ -45,12 +46,16 @@ POSTNORD_API_KEY={{POSTNORD_API_KEY}}
 ## Körning av projektet
 För att starta servern och klienten, kör följande kommandon i separata terminalfönster:
 - För servern:
-  1. cd server
-  2. npm run dev
+```
+cd server
+npm run dev
+```
 
 - För klienten:
-  1. cd client
-  2. npm run dev
+```
+cd client
+npm run dev
+```
    
 ## Uppgiftsbeskrivning och betygskriterier
 ### Krav för godkänt:
