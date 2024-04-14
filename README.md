@@ -14,19 +14,20 @@ I det här projektet har vi skapat en webshop som möjliggör registrering och i
 2. Installera beroenden i både server- och client-mappen.
    - cd server
    - npm install
-   - cd../client
+   - cd..
+   - cd client
    - npm install
 
 
 ## Konfiguration
 Skapa en `.env`-fil i både `server` och `client`. Dessa filer ska innehålla nödvändiga API-nycklar och konfigurationer specifika för din miljö.
 
-`.env` i `client`: 
+`.env` i client: 
 ```
 VITE_API_URL=http://localhost:3000/api
 ```
 
-`.env` i `server`:
+`.env` i server:
 ```
 STRIPE_PRIVATE_KEY={{STRIPE_PRIVATE_KEY}}
 COOKIE_SESSION_SECRET_KEY={{COOKIE_SESSION_SECRET_KEY}}
@@ -39,14 +40,14 @@ POSTNORD_API_KEY={{POSTNORD_API_KEY}}
 ## Körning av projektet
 För att starta servern och klienten, kör följande kommandon i separata terminalfönster:
 - För servern:
-1. cd server
-2. npm run dev
+  1. cd server
+  2. npm run dev
 
 - För klienten:
-1. cd client
-2. npm run dev
+  1. cd client
+  2. npm run dev
    
-## Uppgift
+## Uppgiftsbeskrivning och betygskriterier
 ### Krav för godkänt:
 1. Produkter ska listas på en sida.
 2. Produkter som visas och köps skall hämtas ifrån Stripe.
